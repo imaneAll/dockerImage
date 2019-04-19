@@ -1,0 +1,70 @@
+FROM ubuntu:xenial
+
+
+# Begin common steps (Must be the same in the CPU and GPU images)
+RUN apt-get update && apt-get install -y \
+    apt-transport-https \
+    iputils-ping \
+    git \
+    python2.7 \
+    python-pip \
+    python-dev \
+    python-software-properties \
+    python-tk \
+    software-properties-common \
+    build-essential \
+    cmake \
+    libhdf5-dev \
+    swig \
+    wget \
+    curl
+
+## Python 3.6
+RUN add-apt-repository ppa:deadsnakes/ppa && \
+    apt-get update -y  && \
+    apt-get install python3.6 -y \
+        python3.6-venv \
+        python3.6-dev \
+        python3-software-properties
+
+
+
+## Set up python3.6 environment
+
+RUN pip3 install -U pip
+RUN pip3 install -U \
+      numpy \
+      scipy \
+      matplotlib \
+      pandas \
+      sympy \
+      nose \
+      spacy \
+      tqdm \
+      wheel \
+      scikit-learn \
+      scikit-image \
+	  scikit-multilearn\
+      nltk
+
+RUN python3.6 -m spacy download en
+
+# End common steps
+# CPU-specific commands
+
+RUN pip2 install -U \
+      tensorflow \
+      tensorboard \
+      keras
+
+RUN pip2 install -U http://download.pytorch.org/whl/cpu/torch-0.4.1-cp27-cp27mu-linux_x86_64.whl || pip install -U http://download.pytorch.org/whl/cpu/torch-0.4.1-cp27-cp27m-linux_x86_64.whl
+RUN pip2 install torchvision
+
+
+RUN pip3 install -U \
+      tensorflow \
+      tensorboard \
+      keras
+
+RUN pip3 install http://download.pytorch.org/whl/cpu/torch-0.4.1-cp36-cp36m-linux_x86_64.whl
+RUN pip3 install torchvision
